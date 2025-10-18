@@ -1,0 +1,74 @@
+
+TEST: 1. GET /api - Check API Root
+{"message":"Task Management API","version":"1.0.0","endpoints":{"POST /api/tasks":"Create a new task","GET /api/tasks":"List all tasks (optional ?status=PENDING|IN_PROGRESS|DONE)","GET /api/tasks/overdue":"List overdue tasks","PATCH /api/tasks/:id/status":"Update task status","DELETE /api/tasks/:id":"Delete a task","GET /health":"Health check"}}
+✓ PASSED
+
+TEST: 2. POST /tasks - Create Task with all fields
+{"id":1,"title":"Complete project documentation","description":"Write comprehensive README and API docs","dueDate":"2025-12-31T23:59:59.000Z","status":"PENDING"}
+[DEBUG] Captured TASK_ID_1: 1
+✓ PASSED
+
+TEST: 3. POST /tasks - Create Task with minimal fields
+{"id":2,"title":"Review code architecture","status":"PENDING"}
+[DEBUG] Captured TASK_ID_2: 2
+✓ PASSED
+
+TEST: 4. POST /tasks - Create Overdue Task (should fail validation)
+{"error":"Due date cannot be in the past"}
+✓ PASSED
+
+TEST: 4b. POST /tasks - Create Task with near-future due date
+{"id":3,"title":"Urgent task","description":"This will be used for overdue testing","dueDate":"2025-10-25T12:00:00.000Z","status":"PENDING"}
+[DEBUG] Captured TASK_ID_3: 3
+✓ PASSED
+
+TEST: 5. GET /tasks - List All Tasks
+[{"id":1,"title":"Complete project documentation","description":"Write comprehensive README and API docs","dueDate":"2025-12-31T23:59:59.000Z","status":"PENDING"},{"id":2,"title":"Review code architecture","status":"PENDING"},{"id":3,"title":"Urgent task","description":"This will be used for overdue testing","dueDate":"2025-10-25T12:00:00.000Z","status":"PENDING"}]
+✓ PASSED
+
+TEST: 6. GET /tasks?status=PENDING - Filter by PENDING
+[{"id":1,"title":"Complete project documentation","description":"Write comprehensive README and API docs","dueDate":"2025-12-31T23:59:59.000Z","status":"PENDING"},{"id":2,"title":"Review code architecture","status":"PENDING"},{"id":3,"title":"Urgent task","description":"This will be used for overdue testing","dueDate":"2025-10-25T12:00:00.000Z","status":"PENDING"}]
+✓ PASSED
+
+TEST: 7. PATCH /tasks/1/status - Update to IN_PROGRESS
+{"id":1,"title":"Complete project documentation","description":"Write comprehensive README and API docs","dueDate":"2025-12-31T23:59:59.000Z","status":"IN_PROGRESS"}
+✓ PASSED
+
+TEST: 8. PATCH /tasks/2/status - Update to DONE
+{"id":2,"title":"Review code architecture","status":"DONE"}
+✓ PASSED
+
+TEST: 9. GET /tasks?status=IN_PROGRESS - Filter by IN_PROGRESS
+[{"id":1,"title":"Complete project documentation","description":"Write comprehensive README and API docs","dueDate":"2025-12-31T23:59:59.000Z","status":"IN_PROGRESS"}]
+✓ PASSED
+
+TEST: 10. GET /tasks/overdue - List Overdue Tasks
+[]
+✓ PASSED
+
+TEST: 11. DELETE /tasks/1 - Delete Task
+✓ PASSED
+
+TEST: 12. GET /tasks - Verify Task Deleted
+[{"id":2,"title":"Review code architecture","status":"DONE"},{"id":3,"title":"Urgent task","description":"This will be used for overdue testing","dueDate":"2025-10-25T12:00:00.000Z","status":"PENDING"}]
+✓ PASSED
+
+=== Testing Error Cases ===
+
+TEST: 13. POST /tasks - Missing required field (should fail)
+{"error":"Title is required"}
+✓ PASSED
+
+TEST: 14. PATCH /tasks/2/status - Invalid status (should fail)
+{"error":"Invalid status"}
+✓ PASSED
+
+TEST: 15. PATCH /tasks/99999/status - Non-existent task (should fail)
+{"error":"Task with id 99999 not found"}
+✓ PASSED
+
+================================================
+Tests Passed: 16
+✓ PASSED
+================================================
+🎉 All tests passed!
